@@ -10,6 +10,8 @@ import (
 	"reflect"
 
 	"gopkg.in/yaml.v2"
+	"bufio"
+	"bytes"
 )
 
 func renderHtmlTable(m yaml.MapSlice) string {
@@ -39,6 +41,18 @@ func renderHtmlTable(m yaml.MapSlice) string {
 
 func RenderYamlHtmlTable(data []byte) []byte {
 	m := yaml.MapSlice{}
+
+	if len(data) < 1 {
+		return []byte("")
+	}
+
+	lines := strings.Split(string(data), "\r\n")
+	if len(lines) == 1 {
+		lines = strings.Split(string(data), "\n")
+	}
+	if len(lines) < 1 || lines[0] != "---" {
+		return []byte("")
+	}
 
 	if err := yaml.Unmarshal(data, &m); err != nil {
 		return []byte("")
@@ -75,12 +89,9 @@ func StripYamlFromText(data []byte) []byte {
 	return []byte(body)
 }
 
-// RenderString renders any YAML section (top of file, denoted by --- on first line and end of YAML)
-// into an HTML table and appends ready of the text after
 func Render(rawBytes []byte) []byte {
-	htmlTable := RenderYamlHtmlTable(rawBytes)
-	body := StripYamlFromText(rawBytes)
-	return append(htmlTable, body...)
+	// NEED: Render full YAML document
+	return rawBytes
 }
 
 // Renders the YAML and text as a string
@@ -88,3 +99,6 @@ func RenderString(rawBytes []byte) string {
 	return string(Render(rawBytes))
 }
 
+func RenderRaw(ra	wBytes []byte) []byte {
+	return rawBytes
+}
