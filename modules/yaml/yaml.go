@@ -10,8 +10,13 @@ import (
 	"reflect"
 
 	"gopkg.in/yaml.v2"
-	"bufio"
-	"bytes"
+)
+
+// Note: this section is for purpose of increase performance and
+// reduce memory allocation at runtime since they are constant literals.
+var (
+	space             = " "
+	spaceEncoded      = "%20"
 )
 
 func renderHtmlTable(m yaml.MapSlice) string {
@@ -89,16 +94,19 @@ func StripYamlFromText(data []byte) []byte {
 	return []byte(body)
 }
 
-func Render(rawBytes []byte) []byte {
-	// NEED: Render full YAML document
-	return rawBytes
+func RenderRaw(body []byte, urlPrefix string) []byte {
+	return body
+}
+
+func Render(rawBytes []byte, urlPrefix string, metas map[string]string) []byte {
+	urlPrefix = strings.Replace(urlPrefix, space, spaceEncoded, -1)
+	result := RenderRaw(rawBytes, urlPrefix)
+//	result = PostProcess(result, urlPrefix, metas)
+//	result = Sanitizer.SanitizeBytes(result)
+	return result
 }
 
 // Renders the YAML and text as a string
-func RenderString(rawBytes []byte) string {
-	return string(Render(rawBytes))
-}
-
-func RenderRaw(ra	wBytes []byte) []byte {
-	return rawBytes
+func RenderString(rawBytes []byte, urlPrefix string, metas map[string]string) string {
+	return string(Render(rawBytes, urlPrefix, metas))
 }
