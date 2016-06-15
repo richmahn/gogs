@@ -106,7 +106,7 @@ func Home(ctx *context.Context) {
 				readmeExist := markdown.IsMarkdownFile(blob.Name()) || markdown.IsReadmeFile(blob.Name())
 				ctx.Data["ReadmeExist"] = readmeExist
 				if readmeExist {
-					yamlHtml := yaml.RenderYamlHtmlTable(buf)
+					yamlHtml := yaml.RenderYamlHtmlTable(buf, yaml.DIR_HORIZONTAL)
 					markdownBody := markdown.Render(yaml.StripYamlFromText(buf), path.Dir(treeLink), ctx.Repo.Repository.ComposeMetas())
 					ctx.Data["FileContent"] = string(append(yamlHtml, markdownBody...))
 				} else {

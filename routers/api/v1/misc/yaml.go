@@ -23,23 +23,5 @@ func Yaml(ctx *context.APIContext, form api.YamlOption) {
 		return
 	}
 
-	var yamlHtml, yamlBody []byte
-	yamlHtml = yaml.RenderYamlHtmlTable([]byte(form.Text))
-	switch form.Mode {
-	case "gfm":
-		yamlBody = yaml.Render(yaml.StripYamlFromText([]byte(form.Text)), form.Context, nil)
-	default:
-		yamlBody = yaml.RenderRaw([]byte(form.Text), "")
-	}
-	ctx.Write(append(yamlHtml, yamlBody...))
-}
-
-// https://github.com/gogits/go-gogs-client/wiki/Miscellaneous#render-a-markdown-document-in-raw-mode
-func YamlRaw(ctx *context.APIContext) {
-	body, err := ctx.Req.Body().Bytes()
-	if err != nil {
-		ctx.Error(422, "", err)
-		return
-	}
-	ctx.Write(yaml.RenderRaw(body, ""))
+	ctx.Write(yaml.Render([]byte(form.Text)))
 }

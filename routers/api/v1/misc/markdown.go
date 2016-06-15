@@ -25,7 +25,7 @@ func Markdown(ctx *context.APIContext, form api.MarkdownOption) {
 	}
 
 	var yamlHtml, markdownBody []byte
-	yamlHtml = yaml.RenderYamlHtmlTable([]byte(form.Text))
+	yamlHtml = yaml.RenderYamlHtmlTable([]byte(form.Text), yaml.DIR_HORIZONTAL)
 	switch form.Mode {
 	case "gfm":
 		markdownBody = markdown.Render(yaml.StripYamlFromText([]byte(form.Text)), form.Context, nil)
