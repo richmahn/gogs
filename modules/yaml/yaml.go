@@ -80,10 +80,10 @@ func renderVerticalHtmlTable(m yaml.MapSlice) string {
 }
 
 func RenderYamlHtmlTable(data []byte, dir string) []byte {
-	m := yaml.MapSlice{}
+	ms := yaml.MapSlice{}
 
 	if len(data) < 1 {
-		return []byte("")
+		return data
 	}
 
 	lines := strings.Split(string(data), "\r\n")
@@ -94,14 +94,18 @@ func RenderYamlHtmlTable(data []byte, dir string) []byte {
 		return []byte("")
 	}
 
-	if err := yaml.Unmarshal(data, &m); err != nil {
-		return []byte("")
+	if err := yaml.Unmarshal(data, &ms); err != nil {
+		mi := yaml.MapItem{}
+		if err := yaml.Unmarshal(data, &mi); err != nil {
+			return data
+		}
+		ms = append(ms, mi)
 	}
 
 	if dir == DIR_HORIZONTAL {
-		return []byte(renderHorizontalHtmlTable(m))
+		return []byte(renderHorizontalHtmlTable(ms))
 	} else if dir == DIR_VERTICAL {
-		return []byte(renderVerticalHtmlTable(m))
+		return []byte(renderVerticalHtmlTable(ms))
 	} else {
 		return data
 	}
