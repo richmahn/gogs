@@ -196,13 +196,13 @@ func renderFile(ctx *context.Context, entry *git.TreeEntry, treeLink, rawLink st
 
 		readmeExist := isSupportedMarkup || markup.IsReadmeFile(blob.Name())
 		ctx.Data["ReadmeExist"] = readmeExist
-		isYaml := yaml.IsYamlFile(blob.Name())
-		ctx.Data["IsYaml"] = isYaml
+		isTocYaml := blob.Name() == "toc.yaml"
+		ctx.Data["IsTocYaml"] = isTocYaml
 		if readmeExist && isSupportedMarkup {
 			yamlHtml := yaml.RenderMarkdownYaml(buf)
-			markupBody := markup.Render(blob.Name(), yaml.StripYamlFromText(buf), path.Dir(treeLink), ctx.Repo.Repository.ComposeMetas())
+                        markupBody := markup.Render(blob.Name(), yaml.StripYamlFromText(buf), path.Dir(treeLink), ctx.Repo.Repository.ComposeMetas())
 			ctx.Data["FileContent"] = string(append(yamlHtml, markupBody...))
-		} else if isYaml {
+		} else if isTocYaml {
 			rendered, err := yaml.RenderYaml(buf)
 			if err == nil {
 				ctx.Data["FileContent"] = string(rendered)

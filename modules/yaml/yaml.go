@@ -42,6 +42,13 @@ func renderHorizontalHtmlTable(m yaml.MapSlice) string {
 
 		if value != nil && reflect.TypeOf(value).String() == "yaml.MapSlice" {
 			value = renderHorizontalHtmlTable(value.(yaml.MapSlice))
+		} else if value != nil && reflect.TypeOf(value).String() == "[]interface {}" {
+			value = value.([]interface{})
+			v := make([]yaml.MapSlice, len(value.([]interface{})))
+			for i, vs := range value.([]interface{}) {
+				v[i] = vs.(yaml.MapSlice)
+			}
+			value = renderVerticalHtmlTable(v)
 		}
 		tbody += fmt.Sprintf("<td>%v</td>", value)
 	}
@@ -90,6 +97,8 @@ func renderVerticalHtmlTable(m []yaml.MapSlice) string {
 			}
 			if key == "slug" {
 				value = fmt.Sprintf(`<a href="content/%v.md">%v</a>`, value, value)
+			} else if key == "link" {
+				value = fmt.Sprintf(`<a href="%v/01.md">%v</a>`, value, value)
 			}
 			table += fmt.Sprintf("<td>%v</td>", value)
 
